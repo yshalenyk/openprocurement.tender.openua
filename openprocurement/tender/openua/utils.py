@@ -21,13 +21,16 @@ def check_bids(request):
     if tender.lots:
         [setattr(i.auctionPeriod, 'startDate', None) for i in tender.lots if i.numberOfBids < 2 and i.auctionPeriod and i.auctionPeriod.startDate]
         [setattr(i, 'status', 'unsuccessful') for i in tender.lots if i.numberOfBids < 2 and i.status == 'active']
+        [setattr(i, 'date', get_now()) for i in tender.lots if i.status == 'unsuccessful']
         if not set([i.status for i in tender.lots]).difference(set(['unsuccessful', 'cancelled'])):
             tender.status = 'unsuccessful'
+            tender.date = get_now()
     else:
         if tender.numberOfBids < 2:
             if tender.auctionPeriod and tender.auctionPeriod.startDate:
                 tender.auctionPeriod.startDate = None
             tender.status = 'unsuccessful'
+            tender.date = get_now()
 
 
 def check_complaint_status(request, complaint):
@@ -160,6 +163,7 @@ def add_next_award(request):
             ]
             if not bids:
                 lot.status = 'unsuccessful'
+                lot.date = get_now()
                 statuses.add('unsuccessful')
                 continue
             unsuccessful_awards = [i.bid_id for i in lot_awards if i.status == 'unsuccessful']
