@@ -14,6 +14,7 @@ class TenderSwitch0BidResourceTest(BaseTenderUAContentWebTest):
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['data']["status"], "unsuccessful")
+        self.assertIn('date', response.json['data'])
 
     def test_set_auction_period(self):
         self.app.authorization = ('Basic', ('chronograph', ''))
@@ -37,6 +38,7 @@ class TenderSwitch1BidResourceTest(BaseTenderUAContentWebTest):
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['data']["status"], "unsuccessful")
+        self.assertIn('date', response.json['data'])
 
 
 class TenderSwitchAuctionResourceTest(BaseTenderUAContentWebTest):
@@ -108,6 +110,7 @@ class TenderSwitchAuctionResourceTest(BaseTenderUAContentWebTest):
         response = self.app.patch_json('/tenders/{}'.format(self.tender_id), {'data': {'id': self.tender_id}})
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.json['data']["status"], "unsuccessful")
+        self.assertIn('date', response.json['data'])
 
     def test_set_auction_period(self):
         self.app.authorization = ('Basic', ('chronograph', ''))
@@ -142,7 +145,9 @@ class TenderLotSwitch0BidResourceTest(BaseTenderUAContentWebTest):
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['data']["status"], "unsuccessful")
+        self.assertIn('date', response.json['data'])
         self.assertEqual(set([i['status'] for i in response.json['data']["lots"]]), set(["unsuccessful"]))
+        [self.assertIn('date', lot) for lot in response.json['data']['lots']]
 
     def test_set_auction_period(self):
         self.app.authorization = ('Basic', ('chronograph', ''))
@@ -170,6 +175,7 @@ class TenderLotSwitch1BidResourceTest(BaseTenderUAContentWebTest):
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['data']["status"], "unsuccessful")
+        self.assertIn('date', response.json['data'])
 
 
 class TenderLotSwitchAuctionResourceTest(BaseTenderUAContentWebTest):
@@ -214,6 +220,7 @@ class TenderLotSwitchAuctionResourceTest(BaseTenderUAContentWebTest):
         response = self.app.patch_json('/tenders/{}'.format(self.tender_id), {'data': {'id': self.tender_id}})
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.json['data']["status"], "unsuccessful")
+        self.assertIn('date', response.json['data'])
 
     def test_set_auction_period(self):
         self.app.authorization = ('Basic', ('chronograph', ''))

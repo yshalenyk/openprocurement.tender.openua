@@ -1026,6 +1026,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         # add lot
         response = self.app.post_json('/tenders/{}/lots?acc_token={}'.format(tender_id, owner_token), {'data': test_lots[0]})
         self.assertEqual(response.status, '201 Created')
+        self.assertNotIn('date', response.json['data'])
         lot_id = response.json['data']['id']
         # add relatedLot for item
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(tender_id, owner_token), {"data": {"items": [{'relatedLot': lot_id}]}})
@@ -1038,7 +1039,9 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         self.app.authorization = ('Basic', ('chronograph', ''))
         response = self.app.patch_json('/tenders/{}'.format(tender_id), {"data": {"id": tender_id}})
         self.assertEqual(response.json['data']["lots"][0]['status'], 'unsuccessful')
+        self.assertIn('date', response.json['data'])
         self.assertEqual(response.json['data']['status'], 'unsuccessful')
+        self.assertIn('date',response.json['data']["lots"][0])
 
     def test_1lot_1bid(self):
         # create tender
@@ -1048,6 +1051,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         # add lot
         response = self.app.post_json('/tenders/{}/lots?acc_token={}'.format(tender_id, owner_token), {'data': test_lots[0]})
         self.assertEqual(response.status, '201 Created')
+        self.assertNotIn('date', response.json['data'])
         lot_id = response.json['data']['id']
         # add relatedLot for item
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(tender_id, owner_token), {"data": {"items": [{'relatedLot': lot_id}]}})
@@ -1066,7 +1070,9 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         self.app.authorization = ('Basic', ('chronograph', ''))
         response = self.app.patch_json('/tenders/{}'.format(tender_id), {"data": {"id": tender_id}})
         self.assertEqual(response.json['data']["lots"][0]['status'], 'unsuccessful')
+        self.assertIn('date', response.json['data']["lots"][0])
         self.assertEqual(response.json['data']['status'], 'unsuccessful')
+        self.assertIn('date', response.json['data'])
 
 
     def test_1lot_1bid_patch(self):
@@ -1077,6 +1083,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         # add lot
         response = self.app.post_json('/tenders/{}/lots?acc_token={}'.format(tender_id, owner_token), {'data': test_lots[0]})
         self.assertEqual(response.status, '201 Created')
+        self.assertNotIn('date', response.json['data'])
         lot_id = response.json['data']['id']
         # add relatedLot for item
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(tender_id, owner_token), {"data": {"items": [{'relatedLot': lot_id}]}})
@@ -1104,6 +1111,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         # add lot
         response = self.app.post_json('/tenders/{}/lots?acc_token={}'.format(tender_id, owner_token), {'data': test_lots[0]})
         self.assertEqual(response.status, '201 Created')
+        self.assertNotIn('date', response.json['data'])
         lot_id = response.json['data']['id']
         self.initial_lots = [response.json['data']]
         # add relatedLot for item
@@ -1187,7 +1195,9 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         self.app.authorization = ('Basic', ('broker', ''))
         response = self.app.get('/tenders/{}'.format(tender_id))
         self.assertEqual(response.json['data']["lots"][0]['status'], 'complete')
+        self.assertIn('date', response.json['data']["lots"][0])
         self.assertEqual(response.json['data']['status'], 'complete')
+        self.assertIn('date', response.json['data'])
 
 
     def test_1lot_3bid_1un(self):
@@ -1198,6 +1208,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         # add lot
         response = self.app.post_json('/tenders/{}/lots?acc_token={}'.format(tender_id, owner_token), {'data': test_lots[0]})
         self.assertEqual(response.status, '201 Created')
+        self.assertNotIn('date', response.json['data'])
         lot_id = response.json['data']['id']
         self.initial_lots = [response.json['data']]
         # add relatedLot for item
@@ -1287,7 +1298,9 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         self.app.authorization = ('Basic', ('broker', ''))
         response = self.app.get('/tenders/{}'.format(tender_id))
         self.assertEqual(response.json['data']["lots"][0]['status'], 'complete')
+        self.assertIn('date', response.json['data']['lots'][0])
         self.assertEqual(response.json['data']['status'], 'complete')
+        self.assertIn('date', response.json['data'])
 
     def test_2lot_0bid(self):
         # create tender
@@ -1299,6 +1312,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
             # add lot
             response = self.app.post_json('/tenders/{}/lots?acc_token={}'.format(tender_id, owner_token), {'data': test_lots[0]})
             self.assertEqual(response.status, '201 Created')
+            self.assertNotIn('date', response.json['data'])
             lots.append(response.json['data']['id'])
         # add item
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(tender_id, owner_token), {"data": {"items": [test_tender_data['items'][0] for i in lots]}})
@@ -1321,7 +1335,9 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         self.app.authorization = ('Basic', ('chronograph', ''))
         response = self.app.patch_json('/tenders/{}'.format(tender_id), {"data": {"id": tender_id}})
         self.assertTrue(all([i['status'] == 'unsuccessful' for i in response.json['data']['lots']]))
+        [self.assertIn('date', lot) for lot in response.json['data']['lots']]
         self.assertEqual(response.json['data']['status'], 'unsuccessful')
+        self.assertIn('date', response.json['data'])
 
     def test_2lot_2can(self):
         # create tender
@@ -1333,6 +1349,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
             # add lot
             response = self.app.post_json('/tenders/{}/lots?acc_token={}'.format(tender_id, owner_token), {'data': test_lots[0]})
             self.assertEqual(response.status, '201 Created')
+            self.assertNotIn('date', response.json['data'])
             lots.append(response.json['data']['id'])
         # add item
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(tender_id, owner_token), {"data": {"items": [test_tender_data['items'][0] for i in lots]}})
@@ -1355,7 +1372,9 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
             }})
         response = self.app.get('/tenders/{}'.format(tender_id))
         self.assertTrue(all([i['status'] == 'cancelled' for i in response.json['data']['lots']]))
+        [self.assertIn('date', lot) for lot in response.json['data']['lots']]
         self.assertEqual(response.json['data']['status'], 'cancelled')
+        self.assertIn('date', response.json['data'])
 
     def test_2lot_1bid_0com_1can(self):
         # create tender
@@ -1367,6 +1386,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
             # add lot
             response = self.app.post_json('/tenders/{}/lots?acc_token={}'.format(tender_id, owner_token), {'data': test_lots[0]})
             self.assertEqual(response.status, '201 Created')
+            self.assertNotIn('date', response.json['data'])
             lots.append(response.json['data']['id'])
         # add item
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(tender_id, owner_token), {"data": {"items": [test_tender_data['items'][0] for i in lots]}})
@@ -1397,6 +1417,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         self.app.authorization = ('Basic', ('chronograph', ''))
         response = self.app.patch_json('/tenders/{}'.format(tender_id), {"data": {"id": tender_id}})
         self.assertEqual(response.json['data']['status'], 'unsuccessful')
+        self.assertIn('date', response.json['data'])
 
     def test_2lot_2bid_1lot_del(self):
         self.app.authorization = ('Basic', ('broker', ''))
@@ -1409,6 +1430,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
             # add lot
             response = self.app.post_json('/tenders/{}/lots?acc_token={}'.format(tender_id, owner_token), {'data': test_lots[0]})
             self.assertEqual(response.status, '201 Created')
+            self.assertNotIn('date', response.json['data'])
             lots.append(response.json['data']['id'])
         self.initial_lots = lots
         # add item
@@ -1454,6 +1476,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
             # add lot
             response = self.app.post_json('/tenders/{}/lots?acc_token={}'.format(tender_id, owner_token), {'data': test_lots[0]})
             self.assertEqual(response.status, '201 Created')
+            self.assertNotIn('date', response.json['data'])
             lots.append(response.json['data']['id'])
         # add item
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(tender_id, owner_token), {"data": {"items": [test_tender_data['items'][0] for i in lots]}})
@@ -1510,7 +1533,9 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         self.app.authorization = ('Basic', ('broker', ''))
         response = self.app.get('/tenders/{}'.format(tender_id))
         self.assertTrue(all([i['status'] == 'complete' for i in response.json['data']['lots']]))
+        [self.assertIn('date', lot) for lot in response.json['data']['lots']]
         self.assertEqual(response.json['data']['status'], 'complete')
+        self.assertIn('date', response.json['data'])
 
     def test_2lot_1bid_0com_0win(self):
         # create tender
@@ -1522,6 +1547,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
             # add lot
             response = self.app.post_json('/tenders/{}/lots?acc_token={}'.format(tender_id, owner_token), {'data': test_lots[0]})
             self.assertEqual(response.status, '201 Created')
+            self.assertNotIn('date', response.json['data'])
             lots.append(response.json['data']['id'])
         # add item
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(tender_id, owner_token), {"data": {"items": [test_tender_data['items'][0] for i in lots]}})
@@ -1550,7 +1576,9 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         self.app.authorization = ('Basic', ('chronograph', ''))
         response = self.app.patch_json('/tenders/{}'.format(tender_id), {"data": {"id": tender_id}})
         self.assertTrue(all([i['status'] == 'unsuccessful' for i in response.json['data']['lots']]))
+        [self.assertIn('date', lot) for lot in response.json['data']['lots']]
         self.assertEqual(response.json['data']['status'], 'unsuccessful')
+        self.assertIn('date', response.json['data'])
 
     def test_2lot_1bid_1com_1win(self):
         # create tender
@@ -1590,6 +1618,7 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         self.app.authorization = ('Basic', ('chronograph', ''))
         response = self.app.patch_json('/tenders/{}'.format(tender_id), {"data": {"id": tender_id}})
         self.assertEqual(response.json['data']['status'], 'unsuccessful')
+        self.assertIn('date', response.json['data'])
 
     def test_2lot_2bid_2com_2win(self):
         # create tender
@@ -1717,7 +1746,9 @@ class TenderLotProcessTest(BaseTenderUAContentWebTest):
         self.app.authorization = ('Basic', ('broker', ''))
         response = self.app.get('/tenders/{}'.format(tender_id))
         self.assertTrue(all([i['status'] == 'complete' for i in response.json['data']['lots']]))
+        [self.assertIn('date', lot) for lot in response.json['data']['lots']]
         self.assertEqual(response.json['data']['status'], 'complete')
+        self.assertIn('date', response.json['data'])
 
 
 def suite():

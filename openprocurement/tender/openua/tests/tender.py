@@ -864,12 +864,14 @@ class TenderUAResourceTest(BaseTenderUAWebTest):
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertNotEqual(response.json['data']['status'], 'cancelled')
+        self.assertNotIn('date', response.json['data'] )
 
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(
             tender['id'], owner_token), {'data': {'status': 'cancelled'}})
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertNotEqual(response.json['data']['status'], 'cancelled')
+        self.assertNotIn('date', response.json['data'] )
 
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(tender['id'], owner_token), {'data': {'procuringEntity': {'kind': 'defense'}}})
         self.assertEqual(response.status, '200 OK')
@@ -1223,6 +1225,7 @@ class TenderUAProcessTest(BaseTenderUAWebTest):
         self.app.authorization = ('Basic', ('chronograph', ''))
         response = self.app.patch_json('/tenders/{}'.format(tender_id), {"data": {"id": tender_id}})
         self.assertEqual(response.json['data']['status'], 'unsuccessful')
+        self.assertIn('date', response.json['data'])
 
     def test_one_invalid_bid_tender(self):
         self.app.authorization = ('Basic', ('broker', ''))
@@ -1245,6 +1248,7 @@ class TenderUAProcessTest(BaseTenderUAWebTest):
         response = self.app.patch_json('/tenders/{}'.format(tender_id), {"data": {"id": tender_id}})
         # get awards
         self.assertEqual(response.json['data']['status'], 'unsuccessful')
+        self.assertIn('date', response.json['data'])
 
     def test_first_bid_tender(self):
         self.app.authorization = ('Basic', ('broker', ''))
@@ -1359,6 +1363,7 @@ class TenderUAProcessTest(BaseTenderUAWebTest):
         self.app.authorization = ('Basic', ('broker', ''))
         response = self.app.get('/tenders/{}'.format(tender_id))
         self.assertEqual(response.json['data']['status'], 'complete')
+        self.assertIn('date', response.json['data'])
 
 
 def suite():
